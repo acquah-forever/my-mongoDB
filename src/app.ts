@@ -4,7 +4,7 @@ import NoteModel from "./models/note"
 
 const app = express();
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
     const notes = await NoteModel.find().exec()
 
 });
