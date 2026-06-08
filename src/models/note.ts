@@ -8,6 +8,4 @@ const noteSchema = new Schema({
 
 type Note = InferSchemaType<typeof noteSchema>;
 
-const NoteModel = model<Note>("Note", noteSchema);
-
-export default NoteModel;
+export default model<Note>("Note", noteSchema);
