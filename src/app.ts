@@ -4,7 +4,7 @@ import router from './routes/notes';
 
 const app = express();
 
-// for sending and receiving json data to our server
+// for sending and receiving json data on server
 app.use(express.json());
 
 // main endpoint
