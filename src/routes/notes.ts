@@ -3,9 +3,8 @@ import {getNotes, createNote} from '../controllers/notes'
 
 const router = express.Router()
 
-
 router.get("/", getNotes );
 
-router.post("/", createNote)
+router.post("/", createNote);
 
 export default router
