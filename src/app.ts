@@ -4,16 +4,6 @@ import Note from "./models/note";
 
 const app = express();
 
-app.get("/", async (req, res, next) => {
-    try {
-        // throw Error("trums")
-        const notes = await Note.find().exec();
-        res.status(200).json(notes);
-    } catch (error) {
-        next(error);
-    }
-});
-
 // error for handling endpoint not found
 app.use((req, res, next) => {
     next(Error("Endpoint not found"))
