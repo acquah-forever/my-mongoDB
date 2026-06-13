@@ -1,4 +1,7 @@
-async (req, res, next) => {
+import { RequestHandler } from "express";
+import Note from "../models/note";
+
+export const getNotes: RequestHandler = async (req, res, next) => {
     try {
         // throw Error("trums")
         const notes = await Note.find().exec();

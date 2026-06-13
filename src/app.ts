@@ -1,8 +1,10 @@
 import "dotenv/config"
 import express, { NextFunction, Request, Response } from "express";
-import Note from "./models/note";
+import notesRoutes from './routes/notes'
 
 const app = express();
+
+app.use('/api/notes', notesRoutes)
 
 // error for handling endpoint not found
 app.use((req, res, next) => {
