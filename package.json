@@ -14,11 +14,13 @@
     "dotenv": "^17.4.2",
     "envalid": "^8.1.1",
     "express": "^5.2.1",
+    "http-errors": "^2.0.1",
     "mongoose": "^9.6.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/express": "^5.0.6",
+    "@types/http-errors": "^2.0.5",
     "eslint": "^10.4.1",
     "globals": "^17.6.0",
     "jiti": "^2.7.0",
