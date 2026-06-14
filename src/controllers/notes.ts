@@ -11,10 +11,13 @@ export const getNotes: RequestHandler = async (req, res, next) => {
 };
 
 export const getNote: RequestHandler = async (req, res, next) => {
-    
+
     const noteId = req.params.noteId;
     try {
         const note = await Note.findById(noteId).exec();
+        if (!note) {
+            return res.status(404).json({error: "Note not found"})
+        }
         res.status(200).json(note);
     } catch (error) {
         next(error);
