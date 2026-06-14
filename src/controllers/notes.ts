@@ -4,6 +4,7 @@ import Note from "../models/note";
 export const getNotes: RequestHandler = async (req, res, next) => {
     try {
         const notes = await Note.find().exec();
+        if(!notes) res.status(404).json({error: "Notes not found"})
         res.status(200).json(notes);
     } catch (error) {
         next(error);
@@ -11,13 +12,10 @@ export const getNotes: RequestHandler = async (req, res, next) => {
 };
 
 export const getNote: RequestHandler = async (req, res, next) => {
-
     const noteId = req.params.noteId;
     try {
         const note = await Note.findById(noteId).exec();
-        if (!note) {
-            return res.status(404).json({error: "Note not found"})
-        }
+        if (!note) res.status(404).json({error: "Note not found"})            
         res.status(200).json(note);
     } catch (error) {
         next(error);
