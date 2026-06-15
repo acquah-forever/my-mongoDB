@@ -1,24 +1,22 @@
-import { Schema, InferSchemaType, model } from "mongoose"
+import {Schema, InferSchemaType, model} from "mongoose";
 
-const Schema = new Schema (
+const noteSchema = new Schema(
     {
-        title: {
+        title:{
             type: string,
-            required: true,
+            required: true
         },
 
         text: {
             type: string,
-            required: false
-        },
-
-        publication: {
-            type: string,
-            required: true,
+            required:false,
         }
+    },
+    {
+        timestamps: true
     }
-)
+);
 
-type Note = InferSchemaType<typeof Schema>
+type Note = InferSchemaType<typeof noteSchema>;
 
-export default model<Note>
+export default model<Note>("Note", noteSchema)
