@@ -6,7 +6,6 @@ import mongoose from "mongoose";
 export const getNotes: RequestHandler = async (req, res, next) => {
     try {
         const notes = await Note.find().exec();
-        if (!notes) res.status(404).json({ error: "Notes not found" })
         res.status(200).json(notes);
     } catch (error) {
         next(error);
@@ -88,7 +87,7 @@ export const updateNote: RequestHandler<UpdateNoteParams, unknown, UpdateNoteBod
 
         note.title = newTitle;
         note.text = newText;
-        note.text = newText;
+
 
         const updatedNote = await note.save();
 
