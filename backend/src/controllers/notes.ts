@@ -44,10 +44,7 @@ export const createNote: RequestHandler<unknown, unknown, CreateNoteBody, unknow
             throw createHttpError(400, "Note must have a title");
         }
 
-        const newNote = await Note.create({
-            title: title,
-            text: text,
-        });
+        const newNote = await Note.create({ title,text });
 
         res.status(201).json(newNote);
     } catch (error) {
