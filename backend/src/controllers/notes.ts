@@ -44,10 +44,7 @@ export const createNote: RequestHandler<unknown, unknown, CreateNoteBody, unknow
             throw createHttpError(400, "Note must have a title");
         }
 
-        const newNote = await Note.create({
-            title: title,
-            text: text,
-        });
+        const newNote = await Note.create({ title,text });
 
         res.status(201).json(newNote);
     } catch (error) {
@@ -57,12 +54,12 @@ export const createNote: RequestHandler<unknown, unknown, CreateNoteBody, unknow
 
 interface UpdateNoteParams {
     noteId: string,
-}
+};
 
 interface UpdateNoteBody {
     title: string,
     text: string,
-}
+};
 
 export const updateNote: RequestHandler<UpdateNoteParams, unknown, UpdateNoteBody, unknown> = async (req, res, next) => {
 
@@ -73,7 +70,7 @@ export const updateNote: RequestHandler<UpdateNoteParams, unknown, UpdateNoteBod
     try {
 
         if (!mongoose.isValidObjectId(noteId)) {
-            throw createHttpError(400, "Invalid note id")
+            throw createHttpError(400, "Invalid note id");
         };
         if (!newTitle) {
             throw createHttpError(400, "Note must have a title");
