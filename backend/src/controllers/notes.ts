@@ -57,12 +57,12 @@ export const createNote: RequestHandler<unknown, unknown, CreateNoteBody, unknow
 
 interface UpdateNoteParams {
     noteId: string,
-}
+};
 
 interface UpdateNoteBody {
     title: string,
     text: string,
-}
+};
 
 export const updateNote: RequestHandler<UpdateNoteParams, unknown, UpdateNoteBody, unknown> = async (req, res, next) => {
 
@@ -73,7 +73,7 @@ export const updateNote: RequestHandler<UpdateNoteParams, unknown, UpdateNoteBod
     try {
 
         if (!mongoose.isValidObjectId(noteId)) {
-            throw createHttpError(400, "Invalid note id")
+            throw createHttpError(400, "Invalid note id");
         };
         if (!newTitle) {
             throw createHttpError(400, "Note must have a title");
