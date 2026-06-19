@@ -14,7 +14,7 @@ const Home = () => {
 
         _id: string,
         title: string,
-        text: string,
+        text?: string,
         createdAt: string,
         updatedAt: string,
     };
