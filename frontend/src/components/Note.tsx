@@ -11,6 +11,7 @@ const Note = ({ note }: NoteProps) => {
             <small>{note._id}</small>
             <h2>{note.title}</h2>
             <p>{note.text}</p>
+            <p>{note.createdAt}</p>
         </section>
     )
 }
