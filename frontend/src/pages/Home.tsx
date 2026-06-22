@@ -1,5 +1,6 @@
 import type { Note as NoteModel } from '../models/note';
 import { useQuery } from '@tanstack/react-query';
+import { formatDate } from '../utils/formatDate';
 
 const Home = () => {
     async function getNotes() {
@@ -17,6 +18,12 @@ const Home = () => {
         staleTime: 1000 * 5
     })
 
+    // let createdUpdatedText: string
+    // if(updatedAt > createdAt) {
+    //     createdUpdatedText = "Updated:" + formatDate(updatedAt);
+    // } else {
+    //     createdUpdatedText = "Created" + formatDate(createdAt);
+    // }
 
 
     return (
@@ -30,7 +37,7 @@ const Home = () => {
                         <h3 className='text-2xl font-semibold'>{note.title}</h3>
                         <p className='text-lg'>{note.text}</p>
                         <div className='border border-slate-400 mt-7 mb-7'></div>
-                        <p className='text-sm'>{note.updatedAt}</p>
+                        {/* <p className='text-sm'>{createdUpdatedText}</p> */}
 
                         <br />
                     </li>
