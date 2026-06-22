@@ -1,14 +1,32 @@
 import type { Note as NoteModel } from '../models/note';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
+
 
 const Home = () => {
+
     async function getNotes() {
         const res = await fetch("/api/notes");
         if (!res.ok) {
             throw new Error("Network Issues");
         }
-        return res.json() as Promise<NoteModel[]>;
+        return res.json() as Promise<NoteModel []>;
     };
+
+    async function createNote(newNote) {
+        const res = await fetch("/api/notes", {
+            method: "POST",
+            headers: {
+                "Content-type" : "application/json"
+            },
+            body: JSON.stringify(newNote)
+        })
+
+        if(!res.ok) {
+            throw new Error("Network Issue")
+        }
+
+        return res.json() as Promise<NoteModel []>;
+    }
 
 
     const { data: notes, isLoading, isError } = useQuery<NoteModel[]>({
@@ -17,6 +35,16 @@ const Home = () => {
         staleTime: 1000 * 5
     })
 
+    const { data, mutate } = useMutation<NoteModel[]>({
+        mutationFn: createNote
+    })
+
+    // let createdUpdatedText: string
+    // if(updatedAt > createdAt) {
+    //     createdUpdatedText = "Updated:" + formatDate(updatedAt);
+    // } else {
+    //     createdUpdatedText = "Created" + formatDate(createdAt);
+    // }
 
 
     return (
@@ -24,11 +52,14 @@ const Home = () => {
             {isLoading && <p>Loading...</p>}
             {isError && <p>Something went wrong</p>}
 
-            <ul>
+            <ul className='max-w-3xl grid grid-cols-1 sm:grid-cols-2 m-3 gap-5'>
                 {notes?.map((note) => (
-                    <li key={note._id}>
-                        <h3>{note.title}</h3>
-                        <p>{note.text}</p>
+                    <li className='bg-amber-100 border border-slate-500 p-4' key={note._id}>
+                        <h3 className='text-2xl font-semibold'>{note.title}</h3>
+                        <p className='text-lg'>{note.text}</p>
+                        <div className='border border-slate-400 mt-7 mb-7'></div>
+                        {/* <p className='text-sm'>{createdUpdatedText}</p> */}
+
                         <br />
                     </li>
                 ))}
