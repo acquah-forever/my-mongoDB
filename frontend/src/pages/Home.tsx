@@ -1,21 +1,42 @@
 import type { Note as NoteModel } from '../models/note';
-import { useQuery } from '@tanstack/react-query';
-import { formatDate } from '../utils/formatDate';
+import { useQuery, useMutation } from '@tanstack/react-query';
+
 
 const Home = () => {
+
     async function getNotes() {
         const res = await fetch("/api/notes");
         if (!res.ok) {
             throw new Error("Network Issues");
         }
-        return res.json() as Promise<NoteModel[]>;
+        return res.json() as Promise<NoteModel []>;
     };
+
+    async function createNote(newNote) {
+        const res = await fetch("/api/notes", {
+            method: "POST",
+            headers: {
+                "Content-type" : "application/json"
+            },
+            body: JSON.stringify(newNote)
+        })
+
+        if(!res.ok) {
+            throw new Error("Network Issue")
+        }
+
+        return res.json() as Promise<NoteModel []>;
+    }
 
 
     const { data: notes, isLoading, isError } = useQuery<NoteModel[]>({
         queryKey: ["notes"],
         queryFn: getNotes,
         staleTime: 1000 * 5
+    })
+
+    const { data, mutate } = useMutation<NoteModel[]>({
+        mutationFn: createNote
     })
 
     // let createdUpdatedText: string
