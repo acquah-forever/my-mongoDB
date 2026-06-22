@@ -8,11 +8,9 @@ const Note = ({ note }: NoteProps) => {
 
     return (
         <section>
-            <div>
-                <small>{note._id}</small>
-                <h2>{note.title}</h2>
-                <p>{note.text}</p>
-            </div>
+            <small>{note._id}</small>
+            <h2>{note.title}</h2>
+            <p>{note.text}</p>
         </section>
     )
 }

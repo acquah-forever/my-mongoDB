@@ -24,11 +24,11 @@ const Home = () => {
             {isLoading && <p>Loading...</p>}
             {isError && <p>Something went wrong</p>}
 
-            <ul>
+            <ul className='bg-amber-200 max-w-3xl'>
                 {notes?.map((note) => (
-                    <li key={note._id}>
-                        <h3>{note.title}</h3>
-                        <p>{note.text}</p>
+                    <li className='border border-slate-500' key={note._id}>
+                        <h3 className='text-2xl font-semibold'>{note.title}</h3>
+                        <p className='text-lg text-purple-600'>{note.text}</p>
                         <br />
                     </li>
                 ))}
