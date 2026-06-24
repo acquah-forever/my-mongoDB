@@ -46,7 +46,7 @@ const Home = () => {
 
     return (
         <div>
-            {isLoading && <p>Loading...</p>}
+            {isLoading && <p>Data is Loading...</p>}
             {isError && <p>Something went wrong</p>}
 
             <ul className='max-w-3xl grid grid-cols-1 sm:grid-cols-2 m-3 gap-5'>
