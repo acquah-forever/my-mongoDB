@@ -25,7 +25,7 @@ const Home = () => {
             throw new Error("Network Issue")
         }
 
-        return res.json() as Promise<NoteModel []>;
+        return res.json() as Promise<NoteModel[]>;
     }
 
 
@@ -35,9 +35,6 @@ const Home = () => {
         staleTime: 1000 * 5
     })
 
-    const { data, mutate } = useMutation<NoteModel[]>({
-        mutationFn: createNote
-    })
 
     // let createdUpdatedText: string
     // if(updatedAt > createdAt) {
