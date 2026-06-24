@@ -25,19 +25,16 @@ const Home = () => {
             throw new Error("Network Issue")
         }
 
-        return res.json() as Promise<NoteModel []>;
+        return res.json() as Promise<NoteModel[]>;
     }
 
 
     const { data: notes, isLoading, isError } = useQuery<NoteModel[]>({
         queryKey: ["notes"],
         queryFn: getNotes,
-        staleTime: 1000 * 5
+        staleTime: 1000 * 6
     })
 
-    const { data, mutate } = useMutation<NoteModel[]>({
-        mutationFn: createNote
-    })
 
     // let createdUpdatedText: string
     // if(updatedAt > createdAt) {
@@ -49,7 +46,7 @@ const Home = () => {
 
     return (
         <div>
-            {isLoading && <p>Loading...</p>}
+            {isLoading && <p>Data is Loading...</p>}
             {isError && <p>Something went wrong</p>}
 
             <ul className='max-w-3xl grid grid-cols-1 sm:grid-cols-2 m-3 gap-5'>
