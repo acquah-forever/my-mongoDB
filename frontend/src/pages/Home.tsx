@@ -32,7 +32,7 @@ const Home = () => {
     const { data: notes, isLoading, isError } = useQuery<NoteModel[]>({
         queryKey: ["notes"],
         queryFn: getNotes,
-        staleTime: 1000 * 5
+        staleTime: 1000 * 6
     })
 
 
