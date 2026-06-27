@@ -1,32 +1,35 @@
+import React, { useState } from "react"
 import type { Note as NoteModel } from '../models/note';
 import { useQuery, useMutation } from '@tanstack/react-query';
 
 
 const Home = () => {
 
+    const [writeNote, setWriteNote] = useState<string>()
+
     async function getNotes() {
         const res = await fetch("/api/notes");
         if (!res.ok) {
             throw new Error("Network Issues");
         }
-        return res.json() as Promise<NoteModel []>;
+        return res.json() as Promise<NoteModel[]>;
     };
 
     type CreateNoteInput = {
         title: string;
-        text? : string;
+        text?: string;
     }
 
     async function createNote(newNote: CreateNoteInput) {
         const res = await fetch("/api/notes", {
             method: "POST",
             headers: {
-                "Content-type" : "application/json"
+                "Content-type": "application/json"
             },
             body: JSON.stringify(newNote)
         })
 
-        if(!res.ok) {
+        if (!res.ok) {
             throw new Error("Network Issue")
         }
 
@@ -44,10 +47,24 @@ const Home = () => {
         mutationFn: createNote
     })
 
+    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+        setWriteNote(event.target.value)
+
+    }
+
 
 
     return (
-        <div>
+        <div className='max-w-4xl w-full p-5'>
+            <form className="max-w-xl w-full flex flex-col justify-center items-center">
+                <label htmlFor="">Notes App</label>
+                <div className="flex flex-col">
+                    <input className='border rounded-lg p-2 max-w-2xl' type="text" value={writeNote} onChange={handleChange} />
+                    <button className="bg-green-400 p-2 rounded">Create Note</button>
+                </div>
+            </form>
+
+
             {isLoading && <p>Data is Loading...</p>}
             {isError && <p>Something went wrong</p>}
 
