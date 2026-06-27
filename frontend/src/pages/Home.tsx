@@ -12,7 +12,12 @@ const Home = () => {
         return res.json() as Promise<NoteModel []>;
     };
 
-    async function createNote(newNote) {
+    type CreateNoteInput = {
+        title: string;
+        text? : string;
+    }
+
+    async function createNote(newNote: CreateNoteInput) {
         const res = await fetch("/api/notes", {
             method: "POST",
             headers: {
@@ -25,7 +30,7 @@ const Home = () => {
             throw new Error("Network Issue")
         }
 
-        return res.json() as Promise<NoteModel[]>;
+        return res.json() as Promise<NoteModel>;
     }
 
 
@@ -35,13 +40,10 @@ const Home = () => {
         staleTime: 1000 * 6
     })
 
+    const { mutate } = useMutation({
+        mutationFn: createNote
+    })
 
-    // let createdUpdatedText: string
-    // if(updatedAt > createdAt) {
-    //     createdUpdatedText = "Updated:" + formatDate(updatedAt);
-    // } else {
-    //     createdUpdatedText = "Created" + formatDate(createdAt);
-    // }
 
 
     return (
