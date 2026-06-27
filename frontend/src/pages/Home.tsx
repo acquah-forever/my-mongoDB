@@ -1,11 +1,10 @@
-import React, { useState } from "react"
 import type { Note as NoteModel } from '../models/note';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useForm } from "react-hook-form"
 
 
 const Home = () => {
 
-    const [writeNote, setWriteNote] = useState<string>()
 
     async function getNotes() {
         const res = await fetch("/api/notes");
@@ -17,7 +16,7 @@ const Home = () => {
 
     type CreateNoteInput = {
         title: string;
-        text?: string;
+        text: string;
     }
 
     async function createNote(newNote: CreateNoteInput) {
@@ -37,30 +36,46 @@ const Home = () => {
     }
 
 
+    const queryClient = useQueryClient();
+
     const { data: notes, isLoading, isError } = useQuery<NoteModel[]>({
         queryKey: ["notes"],
         queryFn: getNotes,
         staleTime: 1000 * 6
     })
 
-    const { mutate } = useMutation({
-        mutationFn: createNote
+    type FormValues = {
+        note: string
+    }
+
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>()
+
+    const { mutate, isPending } = useMutation({
+        mutationFn: createNote,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["notes"] });
+            reset();
+        },
     })
 
-    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        setWriteNote(event.target.value)
-
+    function onSubmit(data: FormValues) {
+        mutate({ title: data.note, text: "" })
     }
 
 
 
     return (
-        <div className='max-w-4xl w-full p-5'>
-            <form className="max-w-xl w-full flex flex-col justify-center items-center">
+        <div className=' p-5 flex flex-col justify-center'>
+            <form className="flex flex-col justify-center items-center" onSubmit={handleSubmit(onSubmit)}>
                 <label htmlFor="">Notes App</label>
-                <div className="flex flex-col">
-                    <input className='border rounded-lg p-2 max-w-2xl' type="text" value={writeNote} onChange={handleChange} />
-                    <button className="bg-green-400 p-2 rounded">Create Note</button>
+                <div className="flex flex-col space-y-3">
+                    <input className='border rounded-lg p-2 max-w-2xl' type="text" placeholder="Enter Note" {...register("note", { required: "Note is required" })} />
+
+                    {errors.note && <p className='text-red-400 text-sm'>{errors.note.message}</p>}
+
+                    <button className="bg-green-400 p-2 rounded" disabled={isPending}>
+                        {isPending ? "Creating..." : "Create Note"}
+                    </button>
                 </div>
             </form>
 
@@ -68,7 +83,7 @@ const Home = () => {
             {isLoading && <p>Data is Loading...</p>}
             {isError && <p>Something went wrong</p>}
 
-            <ul className='max-w-3xl grid grid-cols-1 sm:grid-cols-2 m-3 gap-5'>
+            <ul className='grid grid-cols-1 sm:grid-cols-2 m-3 gap-5'>
                 {notes?.map((note) => (
                     <li className='bg-amber-100 border border-slate-500 p-4' key={note._id}>
                         <h2 className='text-2xl font-semibold'>{note.title}</h2>
