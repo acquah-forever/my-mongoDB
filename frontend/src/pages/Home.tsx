@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import type { Note as NoteModel } from '../models/note';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from "react-hook-form"
+import { Trash } from "lucide";
 
 
 const Home = () => {
@@ -34,6 +35,13 @@ const Home = () => {
         }
 
         return res.json() as Promise<NoteModel>;
+    }
+
+    async function deleteNote(noteId: string) {
+        await fetch("/api/notes" + noteId, {
+            method: "DELETE",
+        })
+
     }
 
 
