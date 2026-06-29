@@ -50,7 +50,7 @@ const Home = () => {
         text: string
     }
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>()
+
 
     const { mutate, isPending } = useMutation({
         mutationFn: createNote,
@@ -58,7 +58,9 @@ const Home = () => {
             queryClient.invalidateQueries({ queryKey: ["notes"] });
             reset();
         },
-    })
+    });
+
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>()
 
     function onSubmit(data: FormValues) {
         mutate({ title: data.title, text: data.text })
@@ -86,9 +88,6 @@ const Home = () => {
                             {errors.title && <p className='text-red-400 text-sm'>{errors.title.message}</p>}
                             <input className='border rounded-lg p-2 max-w-2xl' id="text" type="text" placeholder="Enter Text" {...register("text", { required: "Title is required" })} />
                             {errors.text && <p className='text-red-400 text-sm'>{errors.text.message}</p>}
-
-
-
 
                             <button className="bg-green-400 p-2 rounded" disabled={isPending}>
                                 {isPending ? "Creating..." : "Create Note"}
