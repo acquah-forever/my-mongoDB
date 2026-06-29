@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import "dotenv/config"
+import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
 import router from './routes/notes';
 import createHttpError, {isHttpError} from "http-errors";

@@ -1,6 +1,8 @@
+import React, { useState } from "react"
 import type { Note as NoteModel } from '../models/note';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from "react-hook-form"
+import { Trash } from "lucide";
 
 
 const Home = () => {
@@ -35,6 +37,13 @@ const Home = () => {
         return res.json() as Promise<NoteModel>;
     }
 
+    async function deleteNote(noteId: string) {
+        await fetch("/api/notes" + noteId, {
+            method: "DELETE",
+        })
+
+    }
+
 
     const queryClient = useQueryClient();
 
@@ -45,10 +54,11 @@ const Home = () => {
     })
 
     type FormValues = {
-        note: string
+        title: string,
+        text: string
     }
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>()
+
 
     const { mutate, isPending } = useMutation({
         mutationFn: createNote,
@@ -56,28 +66,45 @@ const Home = () => {
             queryClient.invalidateQueries({ queryKey: ["notes"] });
             reset();
         },
-    })
+    });
+
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>()
 
     function onSubmit(data: FormValues) {
-        mutate({ title: data.note, text: "" })
+        mutate({ title: data.title, text: data.text })
+    }
+
+    const [show, setShow] = useState<boolean>(false)
+
+    function handleClick() {
+        setShow((prev) => !prev)
     }
 
 
 
     return (
         <div className=' p-5 flex flex-col justify-center'>
-            <form className="flex flex-col justify-center items-center" onSubmit={handleSubmit(onSubmit)}>
-                <label htmlFor="">Notes App</label>
-                <div className="flex flex-col space-y-3">
-                    <input className='border rounded-lg p-2 max-w-2xl' type="text" placeholder="Enter Note" {...register("note", { required: "Note is required" })} />
+            <div>
+                <button className="bg-sky-400 p-3 rounded-lg cursor-pointer flex justify-center" onClick={handleClick}>Add New Note</button>
+            </div>
+            {
+                show && (
+                    <form className="flex flex-col justify-center items-center" onSubmit={handleSubmit(onSubmit)}>
+                        <label htmlFor="noteapp">Notes App</label>
+                        <div className="flex flex-col space-y-3">
+                            <input className='border rounded-lg p-2 max-w-2xl' id="note" type="text" placeholder="Enter Title" {...register("title", { required: "Note is required" })} />
+                            {errors.title && <p className='text-red-400 text-sm'>{errors.title.message}</p>}
+                            <input className='border rounded-lg p-2 max-w-2xl' id="text" type="text" placeholder="Enter Text" {...register("text", { required: "Title is required" })} />
+                            {errors.text && <p className='text-red-400 text-sm'>{errors.text.message}</p>}
 
-                    {errors.note && <p className='text-red-400 text-sm'>{errors.note.message}</p>}
+                            <button className="bg-green-400 p-2 rounded" disabled={isPending}>
+                                {isPending ? "Creating..." : "Create Note"}
+                            </button>
+                        </div>
+                    </form>
+                )
+            }
 
-                    <button className="bg-green-400 p-2 rounded" disabled={isPending}>
-                        {isPending ? "Creating..." : "Create Note"}
-                    </button>
-                </div>
-            </form>
 
 
             {isLoading && <p>Data is Loading...</p>}
