@@ -1,12 +1,13 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import type { Note as NoteModel } from '../models/note';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from "react-hook-form"
-import { Trash } from "lucide";
+import { type LucideProps } from "lucide-react";
+import { Trash } from "lucide-react";
+
 
 
 const Home = () => {
-
 
     async function getNotes() {
         const res = await fetch("/api/notes");
@@ -31,16 +32,39 @@ const Home = () => {
         })
 
         if (!res.ok) {
-            throw new Error("Network Issue")
+            throw new Error("Failed to create note")
         }
 
         return res.json() as Promise<NoteModel>;
     }
 
+ 
+    async function updateNote({ noteId, title, text }) {
+        const res = await fetch(`/api/notes/${noteId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify({ title, text })
+        })
+
+        if (!res.ok) {
+            throw new Error("Failed to update note")
+        }
+
+        return res.json() as Promise<NoteModel>;
+
+
+    }
+
     async function deleteNote(noteId: string) {
-        await fetch("/api/notes" + noteId, {
+        const res = await fetch(`/api/notes/${noteId}`, {
             method: "DELETE",
         })
+
+        if (!res.ok) {
+            throw new Error("Failed to delete note")
+        }
 
     }
 
@@ -68,6 +92,13 @@ const Home = () => {
         },
     });
 
+    const { mutate: deleteNoteMutation } = useMutation({
+        mutationFn: deleteNote,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["notes"] });
+        }
+    })
+
     const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>()
 
     function onSubmit(data: FormValues) {
@@ -80,6 +111,10 @@ const Home = () => {
         setShow((prev) => !prev)
     }
 
+    const trashIconProps: LucideProps = {
+        size: 25,
+        strokeWidth: 2,
+    };
 
 
     return (
@@ -110,10 +145,18 @@ const Home = () => {
             {isLoading && <p>Data is Loading...</p>}
             {isError && <p>Something went wrong</p>}
 
-            <ul className='grid grid-cols-1 sm:grid-cols-2 m-3 gap-5'>
+            <ul className='grid grid-cols-1 sm:grid-cols-2 m-3 gap-5 mt-10'>
                 {notes?.map((note) => (
                     <li className='bg-amber-100 border border-slate-500 p-4' key={note._id}>
-                        <h2 className='text-2xl font-semibold'>{note.title}</h2>
+                        <div className="flex justify-between">
+                            <h2 className='text-2xl font-semibold'>{note.title}</h2>
+                            <button type="button" className="cursor-pointer text-red-600 hover:text-red-800 disabled:cursor-not-allowed disabled:opacity-50"
+                                onClick={() => deleteNoteMutation(note._id)}
+                            >
+                                <Trash {...trashIconProps} />
+                            </button>
+                        </div>
+
                         <p className='text-lg'>{note.text}</p>
                         <div className='border border-slate-400 mt-7 mb-7'></div>
                         {/* <p className='text-sm'>{createdUpdatedText}</p> */}
