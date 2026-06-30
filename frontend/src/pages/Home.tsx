@@ -32,10 +32,29 @@ const Home = () => {
         })
 
         if (!res.ok) {
-            throw new Error("Network Issue")
+            throw new Error("Failed to create note")
         }
 
         return res.json() as Promise<NoteModel>;
+    }
+
+ 
+    async function updateNote({ noteId, title, text }) {
+        const res = await fetch(`/api/notes/${noteId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify({ title, text })
+        })
+
+        if (!res.ok) {
+            throw new Error("Failed to update note")
+        }
+
+        return res.json() as Promise<NoteModel>;
+
+
     }
 
     async function deleteNote(noteId: string) {
