@@ -1,9 +1,10 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import type { Note as NoteModel } from '../models/note';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from "react-hook-form"
 import { type LucideProps } from "lucide-react";
 import { Trash } from "lucide-react";
+
 
 
 const Home = () => {
@@ -38,7 +39,7 @@ const Home = () => {
     }
 
     async function deleteNote(noteId: string) {
-        const res = await fetch("/api/notes" + noteId, {
+        const res = await fetch(`/api/notes/${noteId}`, {
             method: "DELETE",
         })
 
@@ -72,6 +73,13 @@ const Home = () => {
         },
     });
 
+    const { mutate: deleteNoteMutation } = useMutation({
+        mutationFn: deleteNote,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [notes] });
+        }
+    })
+
     const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>()
 
     function onSubmit(data: FormValues) {
@@ -84,6 +92,10 @@ const Home = () => {
         setShow((prev) => !prev)
     }
 
+    const trashIconProps: LucideProps = {
+        size: 22,
+        strokeWidth: 2,
+    };
 
 
     return (
@@ -118,7 +130,12 @@ const Home = () => {
                 {notes?.map((note) => (
                     <li className='bg-amber-100 border border-slate-500 p-4' key={note._id}>
                         <h2 className='text-2xl font-semibold'>{note.title}</h2>
-                        <Trash />
+                        <button type="button" className="cursor-pointer text-red-600 hover:text-red-800 disabled:cursor-not-allowed disabled:opacity-50"
+                            onClick={() => deleteNoteMutation(note._id)}
+                        >
+                            <Trash {...trashIconProps} />
+                        </button>
+
                         <p className='text-lg'>{note.text}</p>
                         <div className='border border-slate-400 mt-7 mb-7'></div>
                         {/* <p className='text-sm'>{createdUpdatedText}</p> */}
