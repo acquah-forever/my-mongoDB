@@ -2,11 +2,11 @@ import React, { useState } from "react"
 import type { Note as NoteModel } from '../models/note';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from "react-hook-form"
-import { Trash } from "lucide";
+import { type LucideProps } from "lucide-react";
+import { Trash } from "lucide-react";
 
 
 const Home = () => {
-
 
     async function getNotes() {
         const res = await fetch("/api/notes");
@@ -38,9 +38,13 @@ const Home = () => {
     }
 
     async function deleteNote(noteId: string) {
-        await fetch("/api/notes" + noteId, {
+        const res = await fetch("/api/notes" + noteId, {
             method: "DELETE",
         })
+
+        if (!res.ok) {
+            throw new Error("Failed to delete note")
+        }
 
     }
 
@@ -114,6 +118,7 @@ const Home = () => {
                 {notes?.map((note) => (
                     <li className='bg-amber-100 border border-slate-500 p-4' key={note._id}>
                         <h2 className='text-2xl font-semibold'>{note.title}</h2>
+                        <Trash />
                         <p className='text-lg'>{note.text}</p>
                         <div className='border border-slate-400 mt-7 mb-7'></div>
                         {/* <p className='text-sm'>{createdUpdatedText}</p> */}
