@@ -3,7 +3,7 @@ import type { Note as NoteModel } from '../models/note';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from "react-hook-form"
 import { type LucideProps } from "lucide-react";
-import { Trash } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 
 const Home = () => {
 
@@ -72,6 +72,15 @@ const Home = () => {
 
     }
 
+    const [show, setShow] = useState<boolean>(false)
+    const [editingNoteId, setEditingNoteId] = useState<string | null>(null)
+    const [editForm, setEditForm] = useState<FormValues>({ title: "", text: "", })
+
+    type FormValues = {
+        title: string,
+        text: string
+    }
+
 
     const queryClient = useQueryClient();
 
@@ -89,11 +98,12 @@ const Home = () => {
         },
     });
 
-    const { mutate: updateNoteMutation } = useMutation({
+    const { mutate: updateNoteMutation, isPending: isUpdating } = useMutation({
         mutationFn: updateNote,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["notes"] });
             setEditingNoteId(null);
+            setEditForm({ title: "", text: "" });
         },
     })
 
@@ -104,10 +114,7 @@ const Home = () => {
         }
     })
 
-    type FormValues = {
-        title: string,
-        text: string
-    }
+
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>()
 
@@ -115,7 +122,7 @@ const Home = () => {
         mutate({ title: data.title, text: data.text })
     }
 
-    const [show, setShow] = useState<boolean>(false)
+
 
     function handleClick() {
         setShow((prev) => !prev)
@@ -125,6 +132,38 @@ const Home = () => {
         size: 25,
         strokeWidth: 2,
     };
+
+    const editIconProps: LucideProps = {
+        size: 24,
+        strokeWidth: 2,
+    };
+
+    function startEditing(note: NoteModel) {
+        setEditingNoteId(note._id);
+        setEditForm({
+            title: note.title,
+            text: note.text ?? "",
+        });
+    }
+
+    function cancelEditing() {
+        setEditingNoteId(null);
+        setEditForm({ title: "", text: "" });
+    }
+
+    function handleUpdateSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        if (!editingNoteId || !editForm.title.trim()) {
+            return;
+        }
+
+        updateNoteMutation({
+            noteId: editingNoteId,
+            title: editForm.title,
+            text: editForm.text,
+        });
+    }
 
 
     return (
@@ -158,18 +197,39 @@ const Home = () => {
             <ul className='grid grid-cols-1 sm:grid-cols-2 m-3 gap-5 mt-10'>
                 {notes?.map((note) => (
                     <li className='bg-amber-100 border border-slate-500 p-4' key={note._id}>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between gap-3">
                             <h2 className='text-2xl font-semibold'>{note.title}</h2>
-                            <button type="button" className="cursor-pointer text-red-600 hover:text-red-800 disabled:cursor-not-allowed disabled:opacity-50"
-                                onClick={() => deleteNoteMutation(note._id)}
-                            >
-                                <Trash {...trashIconProps} />
-                            </button>
+                            <div className="flex gap-3">
+                                <button className="cursor-pointer text-sky-700 hover:text-sky-900 disabled:cursor-not-allowed disabled:opacity-50" type="button" onClick={() => startEditing(note)} disabled={isUpdating} aria-label="Edit note">
+                                    <Pencil {...editIconProps} />
+                                </button>
+
+                                <button type="button" className="cursor-pointer text-red-600 hover:text-red-800 disabled:cursor-not-allowed disabled:opacity-50" onClick={() => deleteNoteMutation(note._id)} disabled={isUpdating && editingNoteId === note._id} aria-label="Delete note">
+                                    <Trash {...trashIconProps} />
+                                </button>
+                            </div>
                         </div>
 
                         <p className='text-lg'>{note.text}</p>
                         <div className='border border-slate-400 mt-7 mb-7'></div>
                         {/* <p className='text-sm'>{createdUpdatedText}</p> */}
+
+                        {editingNoteId === note._id && (
+                            <form className="flex flex-col gap-3" onSubmit={handleUpdateSubmit}>
+                                <h3 className="font-semibold">Update Note</h3>
+                                <input className='border rounded-lg p-2 bg-white' type="text" placeholder="Update title" value={editForm.title} onChange={(event) => setEditForm((prev) => ({ ...prev, title: event.target.value }))} required />
+                                <input className='border rounded-lg p-2 bg-white' type="text" placeholder="Update text" value={editForm.text} onChange={(event) => setEditForm((prev) => ({ ...prev, text: event.target.value }))} />
+                                <div className="flex gap-2">
+
+                                    <button className="bg-green-400 p-2 rounded disabled:cursor-not-allowed disabled:opacity-50" type="submit" disabled={isUpdating}>
+                                        {isUpdating ? "Updating..." : "Update"}
+                                    </button>
+                                    <button className="bg-slate-300 p-2 rounded" type="button" onClick={cancelEditing} disabled={isUpdating}>
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        )}
 
                         <br />
                     </li>
