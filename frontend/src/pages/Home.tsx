@@ -5,8 +5,6 @@ import { useForm } from "react-hook-form"
 import { type LucideProps } from "lucide-react";
 import { Trash } from "lucide-react";
 
-
-
 const Home = () => {
 
     async function getNotes() {
