@@ -12,7 +12,7 @@ const Home = () => {
     async function getNotes() {
         const res = await fetch("/api/notes");
         if (!res.ok) {
-            throw new Error("Network Issues");
+            throw new Error("Failed to fetch notes");
         }
         return res.json() as Promise<NoteModel[]>;
     };
@@ -38,8 +38,14 @@ const Home = () => {
         return res.json() as Promise<NoteModel>;
     }
 
- 
-    async function updateNote({ noteId, title, text }) {
+    type UpdateNoteInput = {
+        noteId: string;
+        title: string;
+        text: string;
+    }
+
+
+    async function updateNote({ noteId, title, text }: UpdateNoteInput) {
         const res = await fetch(`/api/notes/${noteId}`, {
             method: "PATCH",
             headers: {
@@ -77,13 +83,6 @@ const Home = () => {
         staleTime: 1000 * 6
     })
 
-    type FormValues = {
-        title: string,
-        text: string
-    }
-
-
-
     const { mutate, isPending } = useMutation({
         mutationFn: createNote,
         onSuccess: () => {
@@ -92,12 +91,25 @@ const Home = () => {
         },
     });
 
+    const { mutate: updateNoteMutation } = useMutation({
+        mutationFn: updateNote,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["notes"] });
+            setEditingNoteId(null);
+        },
+    })
+
     const { mutate: deleteNoteMutation } = useMutation({
         mutationFn: deleteNote,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["notes"] });
         }
     })
+
+    type FormValues = {
+        title: string,
+        text: string
+    }
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>()
 
