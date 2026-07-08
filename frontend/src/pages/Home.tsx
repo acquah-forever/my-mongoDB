@@ -114,15 +114,11 @@ const Home = () => {
         }
     })
 
-
-
     const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>()
 
     function onSubmit(data: FormValues) {
         mutate({ title: data.title, text: data.text })
     }
-
-
 
     function handleClick() {
         setShow((prev) => !prev)
@@ -140,10 +136,7 @@ const Home = () => {
 
     function startEditing(note: NoteModel) {
         setEditingNoteId(note._id);
-        setEditForm({
-            title: note.title,
-            text: note.text ?? "",
-        });
+        setEditForm({ title: note.title, text: note.text});
     }
 
     function cancelEditing() {
@@ -151,18 +144,13 @@ const Home = () => {
         setEditForm({ title: "", text: "" });
     }
 
-    function handleUpdateSubmit(event: React.FormEvent<HTMLFormElement>) {
+    function handleUpdateSubmit(event: React.ChangeEvent<HTMLFormElement>) {
         event.preventDefault();
 
         if (!editingNoteId || !editForm.title.trim()) {
             return;
         }
-
-        updateNoteMutation({
-            noteId: editingNoteId,
-            title: editForm.title,
-            text: editForm.text,
-        });
+        updateNoteMutation({ noteId: editingNoteId, title: editForm.title, text: editForm.text});
     }
 
 
@@ -181,16 +169,14 @@ const Home = () => {
                             <input className='border rounded-lg p-2 max-w-2xl' id="text" type="text" placeholder="Enter Text" {...register("text", { required: "Title is required" })} />
                             {errors.text && <p className='text-red-400 text-sm'>{errors.text.message}</p>}
 
-                            <button className="bg-green-400 p-2 rounded" disabled={isPending}>
+                            <button className="bg-green-400 p-2 rounded">
                                 {isPending ? "Creating..." : "Create Note"}
                             </button>
                         </div>
                     </form>
                 )
             }
-
-
-
+    
             {isLoading && <p>Data is Loading...</p>}
             {isError && <p>Something went wrong</p>}
 
@@ -200,11 +186,11 @@ const Home = () => {
                         <div className="flex justify-between gap-3">
                             <h2 className='text-2xl font-semibold'>{note.title}</h2>
                             <div className="flex gap-3">
-                                <button className="cursor-pointer text-sky-700 hover:text-sky-900 disabled:cursor-not-allowed disabled:opacity-50" type="button" onClick={() => startEditing(note)} disabled={isUpdating} aria-label="Edit note">
+                                <button className="cursor-pointer text-sky-700 hover:text-sky-900 disabled:cursor-not-allowed disabled:opacity-50" type="button" onClick={() => startEditing(note)}>
                                     <Pencil {...editIconProps} />
                                 </button>
 
-                                <button type="button" className="cursor-pointer text-red-600 hover:text-red-800 disabled:cursor-not-allowed disabled:opacity-50" onClick={() => deleteNoteMutation(note._id)} disabled={isUpdating && editingNoteId === note._id} aria-label="Delete note">
+                                <button type="button" className="cursor-pointer text-red-600 hover:text-red-800 disabled:cursor-not-allowed disabled:opacity-50" onClick={() => deleteNoteMutation(note._id)}>
                                     <Trash {...trashIconProps} />
                                 </button>
                             </div>
@@ -217,8 +203,11 @@ const Home = () => {
                         {editingNoteId === note._id && (
                             <form className="flex flex-col gap-3" onSubmit={handleUpdateSubmit}>
                                 <h3 className="font-semibold">Update Note</h3>
-                                <input className='border rounded-lg p-2 bg-white' type="text" placeholder="Update title" value={editForm.title} onChange={(event) => setEditForm((prev) => ({ ...prev, title: event.target.value }))} required />
-                                <input className='border rounded-lg p-2 bg-white' type="text" placeholder="Update text" value={editForm.text} onChange={(event) => setEditForm((prev) => ({ ...prev, text: event.target.value }))} />
+                                <input className='border rounded-lg p-2 bg-white' type="text" placeholder="Update title" value={editForm.title} 
+                                onChange={(event) => setEditForm((prev) => ({ ...prev, title: event.target.value }))} required />
+                                
+                                <input className='border rounded-lg p-2 bg-white' type="text" placeholder="Update text" value={editForm.text} 
+                                onChange={(event) => setEditForm((prev) => ({ ...prev, text: event.target.value }))} />
                                 <div className="flex gap-2">
 
                                     <button className="bg-green-400 p-2 rounded disabled:cursor-not-allowed disabled:opacity-50" type="submit" disabled={isUpdating}>
