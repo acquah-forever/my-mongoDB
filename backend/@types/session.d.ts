@@ -1,9 +1,7 @@
 import mongoose from "mongoose";
 
-declare global {
-    namespace Express {
-        interface Session {
-            userId: mongoose.Types.ObjectId;
-        }
+declare module "express-session" {
+    interface SessionData {
+        userId: mongoose.Types.ObjectId;
     }
 }

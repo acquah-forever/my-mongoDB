@@ -4,11 +4,24 @@ import express, { NextFunction, Request, Response } from "express";
 import router from './routes/notes';
 import userRouter from "./routes/user";
 import createHttpError, {isHttpError} from "http-errors";
+import session from "express-session";
+import env from "./util/validateEnv";
 
 const app = express();
 
 // middleware for sending and receiving json data on server
 app.use(express.json());
+
+// middleware for user authentication
+app.use(session({
+  secret: process.env.SESSION_SECRET!,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 1000 * 60 * 60,
+  },
+  rolling: true, // Reset the cookie expiration time on every request
+}));
 
 //router for main endpoint
 app.use('/api/notes', router);
