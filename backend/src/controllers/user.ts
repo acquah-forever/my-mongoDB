@@ -105,3 +105,13 @@ export const logIn: RequestHandler<unknown, unknown, LoginBody, unknown> = async
         next(error);
     }
 }
+
+export const logOut: RequestHandler = (req, res, next) => {
+    req.session.destroy((error) => {
+        if (error) {
+            next(error);
+        } else {
+            res.status(200).json({ message: "Logged out successfully" });
+        }
+    });
+};
