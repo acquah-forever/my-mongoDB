@@ -40,7 +40,7 @@ export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown> = asy
             password: passwordHashed,
         });
 
-        req.session.userId = newUser._id;
+        req.session.userId = newUser._id.toString();
 
         res.status(201).json(newUser);
 
@@ -54,7 +54,7 @@ interface LoginBody {
     password?: string;
 }
 
-export const login: RequestHandler<unknown, unknown, LoginBody, unknown> = async (req, res, next) => {
+export const logIn: RequestHandler<unknown, unknown, LoginBody, unknown> = async (req, res, next) => {
 
     const username = req.body.username;
     const passwordRaw = req.body.password;
@@ -76,9 +76,9 @@ export const login: RequestHandler<unknown, unknown, LoginBody, unknown> = async
             throw createHttpError(401, "Invalid credentials");
         }
 
-        req.session.userId = user._id;
+        req.session.userId = user._id.toString();
 
-        res.status(200).json(user);
+        res.status(201).json(user);
 
     } catch (error) {
         next(error);

@@ -40,5 +40,9 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
+  },
+  "include": ["src", "@types"],
+  "ts-node": {
+    "files": true
   }
 }
