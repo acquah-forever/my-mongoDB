@@ -2,6 +2,7 @@
 import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
 import router from './routes/notes';
+import userRouter from "./routes/user";
 import createHttpError, {isHttpError} from "http-errors";
 
 const app = express();
@@ -11,6 +12,8 @@ app.use(express.json());
 
 //router for main endpoint
 app.use('/api/notes', router);
+
+app.use("/api/users", userRouter);
 
 // middleware error for handling endpoint not found
 app.use((req, res, next) => {

@@ -9,7 +9,8 @@ interface SignUpBody {
     password?: string;
 }
 
-export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown> = async (res, req, next) => {
+export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown> = async (req, res, next) => {
+
     const username = req.body.username;
     const email = req.body.email;
     const passwordRaw = req.body.password;
