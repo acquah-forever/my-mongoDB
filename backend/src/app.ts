@@ -6,6 +6,7 @@ import userRouter from "./routes/user";
 import createHttpError, {isHttpError} from "http-errors";
 import session from "express-session";
 import env from "./util/validateEnv";
+import MongoStore from "connect-mongo";
 
 const app = express();
 
@@ -21,6 +22,10 @@ app.use(session({
     maxAge: 1000 * 60 * 60,
   },
   rolling: true, // Reset the cookie expiration time on every request
+  store: MongoStore.create({
+    mongoUrl: env.MONGO_CONNECTION_STRING,
+    collectionName: "sessions",
+  }),
 }));
 
 //router for main endpoint
