@@ -136,7 +136,7 @@ const Home = () => {
 
     function startEditing(note: NoteModel) {
         setEditingNoteId(note._id);
-        setEditForm({ title: note.title, text: note.text});
+        setEditForm({ title: note.title, text: note.text ?? "" });
     }
 
     function cancelEditing() {
