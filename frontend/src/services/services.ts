@@ -59,13 +59,15 @@ export async function login(credentials: loginCredentials): Promise<User> {
 }
 
 
-async function logoutUser() {
-        const res = await fetch("/api/users/logout", {
-            method: "POST",
-        })
-
-        if (!res.ok) {
-            throw new Error("Failed to log out user")
+export async function logout(): Promise<void> {
+    const res = await fetch(`${API_URL}/users/logout`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
         }
+    });
 
+    if (!res.ok) {
+        throw new Error("Failed to log out");
     }
+}
