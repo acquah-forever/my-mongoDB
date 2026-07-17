@@ -1,8 +1,7 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { signUp } from "../services/services"
 import { useNavigate } from "react-router-dom"
-import { useQueryClient } from "@tanstack/react-query"
+import { useAuth } from "../context/AuthContext"
 
 type SignUpFormData = {
     username: string;
@@ -16,7 +15,8 @@ const SignUpModel = () => {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
     const navigate = useNavigate()
-    const queryClient = useQueryClient()
+    
+    const { signUp } = useAuth()
 
     const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormData>()
 
@@ -24,8 +24,7 @@ const SignUpModel = () => {
         setIsSubmitting(true)
 
         try {
-            const user = await signUp(data)
-            queryClient.setQueryData(["authenticatedUser"], user)
+            await signUp(data)
             navigate("/")
         } catch (error) {
             console.error("Sign-up failed:", error)

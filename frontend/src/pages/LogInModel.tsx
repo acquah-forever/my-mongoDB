@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { login } from "../services/services";
 import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "../context/AuthContext";
 
 type LoginFormData = {
     username: string;
@@ -12,21 +11,24 @@ type LoginFormData = {
 const LogInModel = () => {
 
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+    const [submitError, setSubmitError] = useState<string | null>(null)
 
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>()
 
     const navigate = useNavigate()
-    const queryClient = useQueryClient()
+    
+    const { login } = useAuth()
 
     async function onSubmit(data: LoginFormData) {
         setIsSubmitting(true)
+        setSubmitError(null)
 
         try {
-            const user = await login(data)
-            queryClient.setQueryData(["authenticatedUser"], user)
+            await login(data)
             navigate("/")
         } catch (error) {
             console.error("Login failed:", error)
+            setSubmitError("Incorrect username or password.")
         } finally {
             setIsSubmitting(false)
         }
@@ -56,6 +58,7 @@ const LogInModel = () => {
                         })} />
                 </div>
                 {errors.password && <p className="text-red-500 text-sm text-center">{errors.password.message}</p>}
+                {submitError && <p className="text-red-500 text-sm text-center" role="alert">{submitError}</p>}
                 <button className="cursor-pointer bg-blue-500 text-white px-3 py-2 rounded" type="submit" disabled={isSubmitting}>Log In</button>
                 <p className="text-center">Don't have an account? <span className="cursor-pointer text-blue-500 hover:underline" onClick={handleSignUpClick}>Sign up</span></p>
             </form>
