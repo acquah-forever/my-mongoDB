@@ -1,34 +1,31 @@
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { signUp } from "../services/services"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { login } from "../services/services";
 
-type SignUpFormData = {
+type LoginFormData = {
     username: string;
-    email: string;
     password: string;
 }
 
-
-const SignUpModel = () => {
+const LogInModel = () => {
 
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
-    const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormData>()
+    const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>()
 
-    async function onSubmit(data: SignUpFormData) {
+    async function onSubmit(data: LoginFormData) {
         try {
-            await signUp(data)
+            await login(data)
         } catch (error) {
-            console.error("Sign-up failed:", error)
+            console.error("Login failed:", error)
         }
-
         setIsSubmitting(true)
-    }
 
+    }
 
     return (
         <div>
-            <h2>Sign Up</h2>
+            <h2>Log In</h2>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div>
                     <label htmlFor="username">Username</label>
@@ -36,12 +33,6 @@ const SignUpModel = () => {
                         {...register("username", { required: "Provide valid username" })} />
                 </div>
                 {errors.username && <p>{errors.username.message}</p>}
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <input type="email" id="email" name="email"
-                        {...register("email", { required: "Provide valid email" })} />
-                </div>
-                {errors.email && <p>{errors.email.message}</p>}
                 <div>
                     <label htmlFor="password">Password</label>
                     <input type="password" id="password" name="password"
@@ -52,12 +43,12 @@ const SignUpModel = () => {
                         })} />
                 </div>
                 {errors.password && <p>{errors.password.message}</p>}
-                <button type="submit" disabled={isSubmitting}>Sign Up</button>
+                <button type="submit" disabled={isSubmitting}>Log In</button>
             </form>
 
-            <p>Already have an account? <a href="/login">Log in</a></p>
+            <p>Don't have an account? <a href="/signup">Sign up</a></p>
         </div>
     )
-}
+}  
 
-export default SignUpModel
+export default LogInModel;
