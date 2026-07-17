@@ -3,6 +3,10 @@ import createHttpError from "http-errors";
 import UserModel from "../models/user";
 import bcrypt from "bcrypt";
 
+function userResponse(user: { username: string; email: string }) {
+    return { username: user.username, email: user.email };
+}
+
 export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
     const authenticatedUserId = req.session.userId;
 
@@ -17,7 +21,7 @@ export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
             throw createHttpError(404, "User not found");
         }
 
-        res.status(200).json(user);
+        res.status(200).json(userResponse(user));
 
     } catch (error) {
         next(error);
@@ -63,7 +67,7 @@ export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown> = asy
 
         req.session.userId = newUser._id.toString();
 
-        res.status(201).json(newUser);
+        res.status(201).json(userResponse(newUser));
 
     } catch (error) {
         next(error);
@@ -99,7 +103,7 @@ export const logIn: RequestHandler<unknown, unknown, LoginBody, unknown> = async
 
         req.session.userId = user._id.toString();
 
-        res.status(201).json(user);
+        res.status(200).json(userResponse(user));
 
     } catch (error) {
         next(error);
