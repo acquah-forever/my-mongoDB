@@ -24,7 +24,7 @@ const LogInModel = () => {
     }
 
     return (
-        <div>
+        <div id="login-model">
             <h2>Log In</h2>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div>
