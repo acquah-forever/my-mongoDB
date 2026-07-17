@@ -1,18 +1,48 @@
-import { NavLink } from "react-router-dom"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { NavLink, useNavigate } from "react-router-dom"
+import { getUser, logout } from "../services/services"
 
 const NavBar = () => {
+  const navigate = useNavigate()
+
+  const queryClient = useQueryClient()
+
+  const { data: user } = useQuery({
+    queryKey: ["user"],
+    queryFn: getUser,
+    retry: false,
+  })
+
+  async function handleLogout() {
+    try {
+      await logout()
+
+      queryClient.removeQueries({ queryKey: ["user"] })
+
+      navigate("/login")
+      
+    } catch (error) {
+      console.error("Log out failed:", error)
+    }
+  }
+
   return (
     <div className="bg-gray-800 text-white p-4 flex justify-between items-center">
-      <h1>My App</h1>
+      <NavLink to="/" className="text-lg font-bold">My Notes App</NavLink>
       <nav>
         <ul className="flex space-x-4">
-          <li><NavLink to="/">Home</NavLink></li>
-          <li><NavLink to="/login">Log In</NavLink></li>
-          <li><NavLink to="/signup">Sign Up</NavLink></li>
+            {user ? (
+                <>
+                    <li className="text-lg"><button onClick={handleLogout}>Log Out</button></li>
+                </>
+            ) : (
+                <>
+                    <li className="text-lg"><NavLink to="/login">Log In</NavLink></li>
+                </>
+            )}
         </ul>
       </nav>
     </div>
   )
 }
-
 export default NavBar
