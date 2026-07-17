@@ -1,49 +1,30 @@
-import type { User } from "../models/user";
+import type { User as UserModel } from "../models/user";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL ?? "/api";
 
-export async function getUser(): Promise<User> {
+const sessionRequest: RequestInit = {
+    credentials: "include",
+};
+
+export async function getUser() {
     const res = await fetch(`${API_URL}/users/me`, {
-        method: "GET",
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-        }
+        ...sessionRequest,
     });
     if (!res.ok) {
         throw new Error("Failed to fetch user");
     }
-    return res.json() as Promise<User>;
+    return res.json() as Promise<UserModel>;
 }
 
-type signUpCredentials = {
+
+export type LoginCredentials = {
     username: string;
-    email: string;
     password: string;
 }
 
-export async function signUp(credentials: signUpCredentials): Promise<User> {
-    const res = await fetch(`${API_URL}/users/signup`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(credentials)
-    });
-
-    if (!res.ok) {
-        throw new Error("Failed to sign up");
-    }
-
-    return res.json() as Promise<User>;
-}
-
-type loginCredentials = {
-        email: string;
-        password: string;
-    }
-
-export async function login(credentials: loginCredentials): Promise<User> {
+export async function login(credentials: LoginCredentials) {
     const res = await fetch(`${API_URL}/users/login`, {
+        ...sessionRequest,
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -55,16 +36,37 @@ export async function login(credentials: loginCredentials): Promise<User> {
         throw new Error("Failed to log in");
     }
 
-    return res.json() as Promise<User>;
+    return res.json() as Promise<UserModel>;
+}
+
+export type SignUpCredentials = {
+    username: string;
+    email: string;
+    password: string;
+}
+
+export async function signUp(credentials: SignUpCredentials) {
+    const res = await fetch(`${API_URL}/users/signup`, {
+        ...sessionRequest,
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(credentials)
+    });
+
+    if (!res.ok) {
+        throw new Error("Failed to sign up");
+    }
+
+    return res.json() as Promise<UserModel>;
 }
 
 
-export async function logout(): Promise<void> {
+export async function logout() {
     const res = await fetch(`${API_URL}/users/logout`, {
+        ...sessionRequest,
         method: "POST",
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-        }
     });
 
     if (!res.ok) {

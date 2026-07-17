@@ -65,7 +65,6 @@ const Home = () => {
         const res = await fetch(`/api/notes/${noteId}`, {
             method: "DELETE",
         })
-
         if (!res.ok) {
             throw new Error("Failed to delete note")
         }
@@ -80,7 +79,6 @@ const Home = () => {
         title: string,
         text: string
     }
-
 
     const queryClient = useQueryClient();
 
