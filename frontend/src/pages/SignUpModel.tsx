@@ -15,7 +15,7 @@ const SignUpModel = () => {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
     const navigate = useNavigate()
-    
+
     const { signUp } = useAuth()
 
     const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormData>()
@@ -40,7 +40,7 @@ const SignUpModel = () => {
     return (
         <div className="flex flex-col items-center justify-center ">
             <form className="bg-white p-6 rounded-lg shadow-xl max-w-xl w-full mt-10" onSubmit={handleSubmit(onSubmit)}>
-                <h2 className="font-bold text-xl text-center mb-4">Sign Up</h2>
+                <h2 className="font-bold text-xl text-center mb-4">Sign-Up</h2>
                 <div className="mb-4 space-y-2">
                     <label className="block text-gray-700 text-xl font-semibold" htmlFor="username">Username</label>
                     <input className="border border-gray-300 p-2 rounded w-full" type="text" id="username"
