@@ -13,6 +13,7 @@ type SignUpFormData = {
 const SignUpModel = () => {
 
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+    const [submitError, setSubmitError] = useState<string | null>(null)
 
     const navigate = useNavigate()
 
@@ -28,6 +29,7 @@ const SignUpModel = () => {
             navigate("/")
         } catch (error) {
             console.error("Sign-up failed:", error)
+            setSubmitError("Failed to sign up. The username or email may already be in use.")
         } finally {
             setIsSubmitting(false)
         }
@@ -63,6 +65,8 @@ const SignUpModel = () => {
                         })} />
                 </div>
                 {errors.password && <p className="text-red-500 text-sm text-center">{errors.password.message}</p>}
+                {submitError && <p className="text-red-500 text-sm text-center" role="alert">{submitError}</p>}
+
                 <button className="cursor-pointer bg-blue-500 text-white px-3 py-2 rounded" type="submit" disabled={isSubmitting}>Sign Up</button>
                 <p className="text-center">Already have an account? <span className="cursor-pointer text-blue-500 hover:underline" onClick={handleLoginClick}>Log in</span></p>
             </form>

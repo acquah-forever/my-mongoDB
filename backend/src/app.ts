@@ -4,6 +4,7 @@ import express, { NextFunction, Request, Response } from "express";
 import router from './routes/notes';
 import userRouter from "./routes/user";
 import createHttpError, {isHttpError} from "http-errors";
+
 import session from "express-session";
 import env from "./util/validateEnv";
 import MongoStore from "connect-mongo";
@@ -28,10 +29,9 @@ app.use(session({
   }),
 }));
 
-//router for main endpoint
+//router for main endpoints
 app.use('/api/notes', router);
-
-app.use("/api/users", userRouter);
+app.use('/api/users', userRouter);
 
 // middleware error for handling endpoint not found
 app.use((req, res, next) => {
