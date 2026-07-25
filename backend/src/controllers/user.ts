@@ -57,13 +57,9 @@ export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown> = asy
             throw createHttpError(409, "Email already exists");
         }
 
-        const passwordHashed = await bcrypt.hash(passwordRaw, 10);
+        const passwordHashed = await bcrypt.hash(passwordRaw, 12);
 
-        const newUser = await UserModel.create({
-            username: username,
-            email: email,
-            password: passwordHashed,
-        });
+        const newUser = await UserModel.create({username, email, password: passwordHashed});
 
         req.session.userId = newUser._id.toString();
 
